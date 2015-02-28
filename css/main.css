@@ -1,0 +1,20 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+
+}
+
+.bag {
+    width: 50%;
+    height: 50%;
+    display: inline-block;
+    float: left;
+    margin: 0;
+    padding: 0;
+    
+    background-position: center;
+    background-size: 50%;
+    background-repeat: no-repeat;
+}
