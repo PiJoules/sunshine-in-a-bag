@@ -9,7 +9,7 @@
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Found sunshine in a bag</h4>
+                <h4 class="modal-title" id="myModalLabel">Found sunshine in a bag. Next up, level </h4>
               </div>
               <div class="modal-footer">
                 <button id="reset" class="btn btn-primary" data-dismiss="modal">Next Level</button>
@@ -68,6 +68,7 @@
                         $(".bag").unbind("click");
                         didWin = true;
                         level++;
+                        $("#myModalLabel").text("Found sunshine in a bag. Next up, level " + level + ".");
                         $("#myModal").modal();
                     }
                 });
