@@ -21,16 +21,21 @@
         <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.min.js"></script>
+        <script id="bagTemplate" type="text/x-handlebars-template">
+            <div class="bag-container">
+                <img class="bag" data-layer="{{layer}}" src="images/bag.png" alt="bag" />
+            </div>
+        </script>
+
         <script type="text/javascript">
             var initProb = 0.9;
             var didWin = false;
             var level = 1;
+            var source = $("#bagTemplate").html();
+            var template = Handlebars.compile(source);
             
             resetBags(initProb);
-            $("#reset").click(function(){
-                resetBags(initProb/2);
-                didWin = false;
-            });
             $('#myModal').on('hidden.bs.modal', function (e) {
                 if (didWin){
                     resetBags(initProb/2);
@@ -38,11 +43,15 @@
                 }
             });
             
+            $(window).resize(function(){
+                alignImages();
+            });
+            
             function resetBags(nextProb){
                 console.log("level: " + level);
-                $(".bag").remove();
+                $(".bag-container").remove();
                 for (var i = 0; i < 4; i++){
-                    $("body").append('<div class="bag" data-layer="1" style="background-image: url(images/bag.png);"></div>');
+                    $("body").append(newBag(1));
                 }
                 initProb = nextProb;
                 initializeBags($(".bag"));
@@ -51,20 +60,21 @@
             // Split into 4 bags of equal size
             function initializeBags(that){
                 that.click(function(){
+                    var bagContainer = $(this).parent();
                     var layer = parseInt($(this).data("layer"));
                     var prob = initProb/layer * $(".bag[data-layer=" + layer + "]").length;
                     console.log("prob: " + prob);
                     var didFind = Math.random() < prob;
                     
                     if (!didFind){
+                        bagContainer.empty();
                         for (var i = 0; i < 4; i++){
-                            $(this).append('<div class="bag" data-layer="' + (layer+1) + '" style="background-image: url(images/bag.png);"></div>');
+                            bagContainer.append(newBag(layer+1));
                         }
-                        initializeBags($(this).children(".bag"));
-                        $(this).unbind("click").css("background-image", "none");
+                        initializeBags(bagContainer.find(".bag"));
                     }
                     else {
-                        $(this).css("background-image", "url(images/sunshine.png)");
+                        $(this).attr("src", "images/sunshine.png");
                         $(".bag").unbind("click");
                         didWin = true;
                         level++;
@@ -72,10 +82,28 @@
                         $("#myModal").modal();
                     }
                 });
+                alignImages();
             }
             
             function randColor(){
                 return '#'+Math.floor(Math.random()*16777215).toString(16);
+            }
+            
+            function newBag(layer){
+                return template({layer: layer});
+            }
+            
+            function widthIsGreaterThanHeight(){
+                return $(window).width() > $(window).height();
+            }
+            
+            function alignImages(){
+                if (widthIsGreaterThanHeight()){
+                    $(".bag").css({height: "100%", width: "auto"});
+                }
+                else {
+                    $(".bag").css({height: "auto", width: "100%"});
+                }
             }
         </script>
     </body>
